@@ -4,6 +4,7 @@ import NavigationBar from '../common/NavigationBar'
 import DataRepository from '../expand/dao/DataRepository'
 import RepositoryCell from '../common/RepositoryCell';
 import LanguageDao,{FLAG_LANGUAGE} from '../expand/dao/LanguageDao'
+import ActionUtils from '../util/ActionUtils'
 import  ScrollableTabView,{ScrollableTabBar}  from 'react-native-scrollable-tab-view'
 const URL = 'https://api.github.com/search/repositories?q=';
 const QUERY_STR = '&sort=stars';
@@ -32,7 +33,7 @@ export default  class PopularPage extends React.Component{
      this.loadData();
     }
    onLoad(){
-        let url=this.getUrl(this.text);
+        let url=this.genFetchUrl(this.text);
         this.dataRepository.fetchNetRepository(url)
             .then(result=>{
                 alert(result);
@@ -47,7 +48,7 @@ export default  class PopularPage extends React.Component{
             })
 
    }
-   getUrl(key){
+    genFetchUrl(key){
         return URL+key+QUERY_STR;
    }
     render() {
@@ -61,7 +62,7 @@ export default  class PopularPage extends React.Component{
             >
                 {this.state.languages.map((result,i,arr)=>{
                     let lan=arr[i];
-                    return lan.checked? <PopularTab key={i} tabLabel={lan.name}></PopularTab>:null;
+                    return lan.checked ? <PopularTab key={i} tabLabel={lan.name} {...this.props}/> : null;
                 })}
 
             </ScrollableTabView>:null;
@@ -72,10 +73,15 @@ export default  class PopularPage extends React.Component{
                backgroundColor:'#2196F3'
               }}
             />
+
             {content}
         </View>)
     }
 }
+
+/**
+ * 最热模块的头部导航
+ */
 class PopularTab extends React.Component{
     constructor(props) {
         super(props);
@@ -93,24 +99,43 @@ class PopularTab extends React.Component{
     loadData(){
         this.setState({isLoading:true});
         let url=URL+this.props.tabLabel+QUERY_STR;
-        this.dataRepository.fetchNetRepository(url)
+       this.dataRepository.fetchNetRepository(url)
             .then(result=>{
-               /* alert(result);*/
+                let items = result && result.items ? result.items : result ? result : [];
+              /* alert(JSON.stringify(items));*/
                 this.setState({
-                    dataSource :this.state.dataSource.cloneWithRows(result.items),
-                     isLoading:false
+                    dataSource:this.state.dataSource.cloneWithRows(items),
+                    isLoading:false
                 })
+/*
+              if(result && result.update_date &&!this.dataRepository.checkData(result.update_date)) return this.dataRepository.fetchNetRepository(url);
+*/
+
             })
-            .catch(error=>{
+          /* .then(items=>{
+
+                if(!items || items.length===0)return;
+                 this.setState({
+                     dataSource:this.state.dataSource.cloneWithRows(items)
+                 })
+           })
+           .catch(error=>{
                 this.setState({
                     result:JSON.stringify(error)
-                })
-            })
+                });
+            })*/
 
+    }
+    onSelect(item){
+        /*alert('--'+item);*/
+        this.props.navigation.navigate('RepositoryDetail',{item:item, ...this.props})
     }
     /*返回每一行的结构内容*/
     renderRow(data){
-        return <RepositoryCell data={data}/>
+        return <RepositoryCell
+            onSelect={()=>this.onSelect(data)}
+               key={data.id}
+               data={data} />
     }
     render() {
         return(<View style={{flex:1}}>

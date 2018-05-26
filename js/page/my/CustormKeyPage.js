@@ -21,6 +21,9 @@ export default  class  CustormKeyPage extends  React.Component{
         // 初始化LangurageDao
         this.LanguageDao=new LanguageDao(FLAG_LANGUAGE.flag_key);
         this.chanageValues=[];//保存用户的修改
+       /* alert(this.props.navigation.getParam('isRemoveKey', 'NO-ID'));*/
+        /*alert(this.props.navigation.getParam('isRemoveKey', 'NO-ID'));*/
+        this.isRemoveKey=this.props.navigation.getParam('isRemoveKey')?true:false;
         this.state={
             dataArray:[]
         }
@@ -30,7 +33,11 @@ export default  class  CustormKeyPage extends  React.Component{
             //说明用户从来没有勾选过
             this.props.navigation.goBack();
             return ;
-        }else{
+        }
+            if(this.isRemoveKey) {
+             for(let i= 0,l=this.chanageValues.length;i<l;i++){
+                 ArrayUtils.remove(this.state.dataArray,this.chanageValues[i])
+            }
             //用户修改了，就将修改的数据传入到数据库中去
             this.LanguageDao.save(this.state.dataArray);
             this.props.navigation.goBack();
@@ -82,15 +89,16 @@ export default  class  CustormKeyPage extends  React.Component{
 
     }
     onClick(data){
-        /*取反，点击一次*/
-    data.checked=!data.checked;
+        if(!this.isRemoveKey)/*取反，点击一次*/data.checked=!data.checked;
         ArrayUtils.updateArray(this.chanageValues,data);
     }
     renderCheckBox(data){
         let leftText=data.name;
+        let isChecked=this.isRemoveKey?false:data.checked;
         return <CheckBox style={{flex:1, padding:10}}
                          isChecked={data.checked}
                           onClick={()=>this.onClick(data)}
+                         isChecked={isChecked}
                          leftText={leftText}
                         checkedImage={<Image style={{tintColor:'#6495ED'}} source={require('./images/ic_check_box.png')} />}
                         unCheckedImage={<Image style={{tintColor:'#6495ED'}} source={require('./images/ic_check_box_outline_blank.png')}/>}
@@ -111,18 +119,21 @@ export default  class  CustormKeyPage extends  React.Component{
         )
     }
     render(){
+        let rightButtonTitle=this.isRemoveKey?'移除':'保存';
+        let title=this.isRemoveKey? '标签移除':'自定义标签';
+     
         let rightButton=<TouchableOpacity
             onPress={()=>{
                 this.onSave();
             }}
          >
             <View>
-                <Text style={styles.title}>保存</Text>
+                <Text style={styles.title}>{rightButtonTitle}</Text>
             </View>
         </TouchableOpacity>
         return (<View>
            <NavigationBar
-                title='自定义标签'
+                title={title}
                 leftButton={ViewUtils.getLeftButton(()=>this.onBack())}
                 style={{backgroundColor:'#6495ED'}}
                 rightButton={rightButton}

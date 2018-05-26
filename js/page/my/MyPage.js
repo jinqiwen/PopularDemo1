@@ -27,7 +27,26 @@ export default  class  MyPage extends  React.Component{
                         params:{...this.props}
                     })
                 }}
-            >欢迎</Text>
+            >自定义标签</Text>
+
+
+            <Text onPress={()=>{
+                this.props.navigation.navigate('SortKeyPage',{
+                    params:{...this.props}
+                })
+            }}
+            >标签排序</Text>
+            <Text
+                isRemoveKey={true}
+                onPress={()=>{
+                this.props.navigation.navigate('CustormKeyPage',{
+                   params: {
+                       ...this.props,
+
+                   }, isRemoveKey: true
+                })
+            }}
+            >标签移除</Text>
         </View>);
     }
 }
