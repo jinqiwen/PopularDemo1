@@ -29,9 +29,12 @@ export const FLAG_TAB = {
     flag_my: 'tb_my'
 };
 export default class HomePage extends BaseComponent {
+
     constructor(props) {
-        super(props);
-      /*  this.params = this.props.navigation.state.params;*/
+       super(props);
+        /*navigation = this.props.navigation;*/
+
+        /*  this.params = this.props.navigation.state.params;*/
         this.state={
             selectedTab:'tb_popular',
            /* theme: this.params.theme|| ThemeFactory.createTheme(ThemeFlags.Default),*/
@@ -50,7 +53,7 @@ export default class HomePage extends BaseComponent {
                 renderIcon={()=><Image style={styles.image} source={renderIcon}/>}
                 selectedTitleStyle={{color:'red '}}
                 onPress={()=>this.onTabClick(this.state.selectedTab, selectedTab)}>
-                <Component {...this.props}  />
+                <Component {...this.props} />
             </TabNavigator.Item>
     }
 
