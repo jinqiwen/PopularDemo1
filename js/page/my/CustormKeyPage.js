@@ -18,15 +18,17 @@ import CheckBox from 'react-native-check-box'
 export default  class  CustormKeyPage extends  React.Component{
     constructor(props){
         super(props);
-        // 初始化LangurageDao
-        this.LanguageDao=new LanguageDao(FLAG_LANGUAGE.flag_key);
         this.chanageValues=[];//保存用户的修改
-       /* alert(this.props.navigation.getParam('isRemoveKey', 'NO-ID'));*/
-        /*alert(this.props.navigation.getParam('isRemoveKey', 'NO-ID'));*/
+       /* alert(this.props.navigation.getParam('flag'));*/
+        this.LanguageDao=new LanguageDao(this.props.navigation.getParam('flag'));
         this.isRemoveKey=this.props.navigation.getParam('isRemoveKey')?true:false;
         this.state={
             dataArray:[]
         }
+    }
+
+    componentDidMount() {
+        this.loadData()
     }
     onSave(){
         if(this.chanageValues.length===0){
@@ -56,7 +58,7 @@ export default  class  CustormKeyPage extends  React.Component{
                            {this.renderCheckBox(this.state.dataArray[i])}
                            {this.renderCheckBox(this.state.dataArray[i+1])}
                        </View>
-                   <View style={styles.line}></View>
+                   <View style={styles.line} />
                    </View>
                )
             }
@@ -66,19 +68,13 @@ export default  class  CustormKeyPage extends  React.Component{
                         {len%2===0?this.renderCheckBox(this.state.dataArray[len-2]):null}
                         {this.renderCheckBox(this.state.dataArray[len-1])}
                     </View>
-                    <View style={styles.line}></View>
                 </View>
             )
             return views;
      }
-
-    componentDidMount() {
-        this.loadData()
-    }
     loadData(){
       this.LanguageDao.fetch()
           .then(result=>{
-             /* alert(result);*/
               this.setState({
                   dataArray:result
               })
@@ -121,7 +117,7 @@ export default  class  CustormKeyPage extends  React.Component{
     render(){
         let rightButtonTitle=this.isRemoveKey?'移除':'保存';
         let title=this.isRemoveKey? '标签移除':'自定义标签';
-     
+        title=this.props.navigation.getParam('flag')===FLAG_LANGUAGE.flag_language?'自定义语言':title;
         let rightButton=<TouchableOpacity
             onPress={()=>{
                 this.onSave();

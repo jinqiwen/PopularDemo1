@@ -16,4 +16,21 @@ export default  class ActionUtils{
 
     }
 
+    /**
+     * favorite单击回调函数
+     * @param favoriteDao
+     * @param item
+     * @param isFavorite
+     * @param flag
+     */
+    static onFavorite(favoriteDao,item,isFavorite, flag){
+        var key= flag ===FLAG_STORAGE.flag_trending?item.fullName:item.id.toString();
+        if(isFavorite){
+            favoriteDao.saveFavoriteItem(key,JSON.stringify(item))
+        }else {
+            favoriteDao.removeFavoroteItem(key);
+        }
+    }
+
+
 }
