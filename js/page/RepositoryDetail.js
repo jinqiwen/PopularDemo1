@@ -6,23 +6,31 @@ import {
     Image,
     View,
     WebView,
+    TouchableOpacity,
     DeviceEventEmitter, Alert
 } from 'react-native';
 import NavigationBar from "../common/NavigationBar";
 import ViewUtils from "../util/ViewUtils";
 import ArrayUtils from "../util/ArrayUtils";
+const TRENDING_URL='http://github.com/'
 export default  class  RepositoryDetail extends  Component{
     constructor(props){
         super(props);
         /*alert(this.props.navigation.getParam('item'));*/
        /* let item= this.props.navigation.getParam('item');*/
-
-        this.url=this.props.navigation.getParam('item').html_url;
-        let title=this.props.navigation.getParam('item').full_name;
+        var item=this.props.navigation.getParam('item');
+        alert(JSON.stringify(item));
+        this.url=item.html_url?this.props.navigation.getParam('item').html_url
+        :TRENDING_URL+item.fullName;
+        let title=item.full_name?this.props.navigation.getParam('item').full_name
+        :item.fullName;
         this.state={
             url:this.url,
             canGoBack:false,
-            title:title
+            title:title,
+            isFavorite:item.isFavorite,
+            favoriteIcon: item.isFavorite ? require('../../res/images/ic_star_navbar.png') : require('../../res/images/ic_unstar_navbar.png'),
+
         }
 
     }
@@ -39,13 +47,21 @@ export default  class  RepositoryDetail extends  Component{
             url:navState.url
         })
     }
+    renderRightButton(){
+        return <TouchableOpacity>
+          <Image
+              source={{}}
+              style={styles}
+          />
+        </TouchableOpacity>
+    }
     render(){
         return (<View style={styles.container}>
             <NavigationBar
                 title={this.state.title}
                 leftButton={ViewUtils.getLeftButton(()=>this.onBack())}
                 style={{backgroundColor:'#6495ED'}}
-               /* rightButton={rightButton}*/
+               rightButton={this.renderRightButton()}
             />
             <WebView
                 ref={webView=> this.webView=webView}

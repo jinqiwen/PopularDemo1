@@ -51,7 +51,7 @@ export default class HomePage extends BaseComponent {
                 renderSelectedIcon={()=><Image style={styles.image} source={renderIcon}/>}
             /*    selectedTitleStyle={this.state.theme.styles.selectedTitleStyle}*/
                 renderIcon={()=><Image style={styles.image} source={renderIcon}/>}
-                selectedTitleStyle={{color:'red '}}
+                selectedTitleStyle={{color:'#DC143C'}}
                 onPress={()=>this.onTabClick(this.state.selectedTab, selectedTab)}>
                 <Component {...this.props} />
             </TabNavigator.Item>
